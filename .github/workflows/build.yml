@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -28,7 +31,8 @@ jobs:
 
       - name: Build installer with Inno Setup
         working-directory: windows-tool
-        run: iscc setup.iss
+        run: '& "C:\Program Files (x86)\Inno Setup 6\iscc.exe" setup.iss'
+        shell: pwsh
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
