@@ -23,11 +23,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: windows-tool
-        run: pip install pillow pillow-heif pyinstaller
+        run: pip install pillow pillow-heif pymupdf pyinstaller
 
       - name: Build exe with PyInstaller
         working-directory: windows-tool
-        run: pyinstaller --onefile --windowed --name heic_to_jpg heic_to_jpg.py
+        run: pyinstaller --onefile --windowed --name image_to_jpg image_to_jpg.py
 
       - name: Build installer with Inno Setup
         working-directory: windows-tool
@@ -37,21 +37,22 @@ jobs:
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HEICtoJPG-Setup
-          path: windows-tool/Output/HEICtoJPG-Setup.exe
+          name: ImageToJPG-Setup
+          path: windows-tool/Output/ImageToJPG-Setup.exe
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: windows-tool/Output/HEICtoJPG-Setup.exe
+          files: windows-tool/Output/ImageToJPG-Setup.exe
           generate_release_notes: false
           body: |
             ## Installation
 
-            1. Download **HEICtoJPG-Setup.exe** below
+            1. Download **ImageToJPG-Setup.exe** below
             2. Run it and follow the installer (requires admin)
-            3. Right-click any `.heic` or `.heif` file → **Convert to JPG**
+            3. Right-click any `.heic`, `.heif`, `.webp`, `.png`, or `.pdf` file → **Convert to JPG**
 
-            The converted `.jpg` is saved in the same folder as the original.
-            All metadata (date taken, GPS location, camera info) is preserved.
+            Multi-page PDFs are converted to one JPG per page.
+            The converted `.jpg`(s) are saved in the same folder as the original.
+            EXIF metadata (date taken, GPS location, camera info) is preserved where present.

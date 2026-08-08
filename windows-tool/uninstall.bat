@@ -1,6 +1,6 @@
 @echo off
 REM ---------------------------------------------------------------
-REM Uninstall HEIC to JPG converter
+REM Uninstall Image to JPG converter
 REM Must be run as Administrator.
 REM ---------------------------------------------------------------
 
@@ -14,8 +14,12 @@ if %errorlevel% neq 0 (
 echo Removing context menu entries...
 reg delete "HKCR\heicfile\shell\ConvertToJPG" /f 2>nul
 reg delete "HKCR\heiffile\shell\ConvertToJPG" /f 2>nul
+reg delete "HKCR\SystemFileAssociations\.webp\shell\ConvertToJPG" /f 2>nul
+reg delete "HKCR\SystemFileAssociations\.png\shell\ConvertToJPG" /f 2>nul
+reg delete "HKCR\SystemFileAssociations\.pdf\shell\ConvertToJPG" /f 2>nul
 
 echo Removing installed files...
+rmdir /S /Q "C:\Program Files\ImageToJPG" 2>nul
 rmdir /S /Q "C:\Program Files\HEICtoJPG" 2>nul
 
 echo Uninstall complete.
