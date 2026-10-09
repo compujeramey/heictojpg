@@ -3,13 +3,29 @@ Image to JPG converter — preserves EXIF metadata (date, GPS, camera info)
 where present. Supports HEIC/HEIF, WEBP, PNG, and PDF source files.
 Each page of a PDF is saved as its own JPG.
 Usage: image_to_jpg.exe file1.heic [file2.webp file3.png file4.pdf ...]
+
+When several files are selected in Explorer, Windows launches one process per
+file. Those processes coordinate through a lock file and a queue directory in
+%TEMP%: the first to grab the lock becomes the leader and converts every queued
+file; the rest just enqueue their paths and exit. This yields a single combined
+error report for the whole batch.
 """
 
+import os
 import sys
+import tempfile
+import time
+import uuid
 from pathlib import Path
 
 HEIF_SUFFIXES = {".heic", ".heif"}
 PDF_RENDER_DPI = 200
+
+WORK_DIR = Path(tempfile.gettempdir()) / "ImageToJPG"
+QUEUE_DIR = WORK_DIR / "queue"
+LOCK_PATH = WORK_DIR / "leader.lock"
+# How long the leader keeps waiting for stragglers once the queue is empty.
+QUIET_PERIOD_SECONDS = 1.5
 
 
 def show_error(message: str) -> None:
@@ -82,6 +98,94 @@ def convert(src_path: Path) -> Path:
     return jpg_path
 
 
+def convert_any(p: Path) -> None:
+    if p.suffix.lower() == ".pdf":
+        convert_pdf(p)
+    else:
+        convert(p)
+
+
+def enqueue(paths: list[str]) -> None:
+    QUEUE_DIR.mkdir(parents=True, exist_ok=True)
+    name = uuid.uuid4().hex
+    tmp = QUEUE_DIR / f"{name}.tmp"
+    tmp.write_text("\n".join(str(Path(p).resolve()) for p in paths), encoding="utf-8")
+    # Rename is atomic, so the leader never reads a half-written entry.
+    os.replace(tmp, QUEUE_DIR / f"{name}.txt")
+
+
+def drain_queue() -> list[Path]:
+    paths: list[Path] = []
+    for entry in sorted(QUEUE_DIR.glob("*.txt")):
+        try:
+            text = entry.read_text(encoding="utf-8")
+            entry.unlink()
+        except OSError:
+            continue
+        paths.extend(Path(line) for line in text.splitlines() if line)
+    return paths
+
+
+def try_lock():
+    """Non-blocking exclusive lock on LOCK_PATH. Returns the open file, or None."""
+    WORK_DIR.mkdir(parents=True, exist_ok=True)
+    fh = open(LOCK_PATH, "a+b")
+    try:
+        if sys.platform == "win32":
+            import msvcrt
+            fh.seek(0)
+            msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        fh.close()
+        return None
+    return fh
+
+
+def unlock(fh) -> None:
+    if sys.platform == "win32":
+        import msvcrt
+        fh.seek(0)
+        msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+    else:
+        import fcntl
+        fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+    fh.close()
+
+
+def run_as_leader(lock) -> list[str]:
+    errors: list[str] = []
+    seen: set[Path] = set()
+
+    while True:
+        idle_since = time.monotonic()
+        while time.monotonic() - idle_since < QUIET_PERIOD_SECONDS:
+            batch = drain_queue()
+            if not batch:
+                time.sleep(0.1)
+                continue
+            for p in batch:
+                if p in seen:
+                    continue
+                seen.add(p)
+                try:
+                    convert_any(p)
+                except Exception as exc:
+                    errors.append(f"{p.name}: {exc}")
+            idle_since = time.monotonic()
+
+        # Release, then re-check. A follower that enqueued after this check
+        # will find the lock free and become the next leader, so nothing is lost.
+        unlock(lock)
+        if not any(QUEUE_DIR.glob("*.txt")):
+            return errors
+        lock = try_lock()
+        if lock is None:
+            return errors
+
+
 def main() -> None:
     paths = sys.argv[1:]
     if not paths:
@@ -91,18 +195,13 @@ def main() -> None:
         )
         sys.exit(1)
 
-    errors: list[str] = []
+    enqueue(paths)
+    lock = try_lock()
+    if lock is None:
+        # Another instance is already converting; it will pick up our files.
+        return
 
-    for raw in paths:
-        p = Path(raw)
-        try:
-            if p.suffix.lower() == ".pdf":
-                convert_pdf(p)
-            else:
-                convert(p)
-        except Exception as exc:
-            errors.append(f"{p.name}: {exc}")
-
+    errors = run_as_leader(lock)
     if errors:
         show_error("Conversion failed:\n\n" + "\n".join(errors))
         sys.exit(1)

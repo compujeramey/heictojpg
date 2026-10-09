@@ -8,7 +8,7 @@ Converts `.heic` / `.heif` / `.webp` / `.png` / `.pdf` files to JPG directly fro
 
 1. Push a version tag to trigger the build:
    ```
-   git tag v2.0 && git push origin v2.0
+   git tag v2.1 && git push origin v2.1
    ```
 2. GitHub Actions builds the installer on a Windows runner automatically.
 3. Download `ImageToJPG-Setup.exe` from the **Releases** page.
@@ -29,6 +29,8 @@ Then run `install.bat` as Administrator.
 ## Usage
 
 Right-click any `.heic`, `.heif`, `.webp`, `.png`, or `.pdf` file in Explorer → **Convert to JPG**.
+
+To convert a batch, select multiple files (Ctrl-click, Shift-click, or Ctrl+A) — they can be a mix of types — then right-click → **Convert to JPG**. There is no limit on how many files you can select. Any failures across the batch are reported together in a single error dialog.
 
 The `.jpg` is saved in the same folder. If a file with that name already exists, a counter suffix is added (`photo_1.jpg`, `photo_2.jpg`, …).
 

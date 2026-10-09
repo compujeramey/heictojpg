@@ -2,7 +2,7 @@
 
 [Setup]
 AppName=Image to JPG Converter
-AppVersion=2.0
+AppVersion=2.1
 AppPublisher=ImageToJPG
 DefaultDirName={autopf}\ImageToJPG
 DefaultGroupName=Image to JPG Converter
@@ -20,6 +20,8 @@ Source: "dist\image_to_jpg.exe"; DestDir: "{app}"; Flags: ignoreversion
 [Registry]
 ; Use SystemFileAssociations so we add to the context menu without
 ; overriding the user's default app for these file types.
+; MultiSelectModel=Player keeps the menu item visible when more than
+; 15 files are selected (Explorer's default limit).
 
 Root: HKCR; Subkey: "SystemFileAssociations\.heic\shell\ConvertToJPG"; \
   ValueType: string; ValueName: ""; ValueData: "Convert to JPG"; \
@@ -27,6 +29,9 @@ Root: HKCR; Subkey: "SystemFileAssociations\.heic\shell\ConvertToJPG"; \
 
 Root: HKCR; Subkey: "SystemFileAssociations\.heic\shell\ConvertToJPG"; \
   ValueType: string; ValueName: "Icon"; ValueData: "{app}\image_to_jpg.exe,0"
+
+Root: HKCR; Subkey: "SystemFileAssociations\.heic\shell\ConvertToJPG"; \
+  ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Player"
 
 Root: HKCR; Subkey: "SystemFileAssociations\.heic\shell\ConvertToJPG\command"; \
   ValueType: string; ValueName: ""; ValueData: """{app}\image_to_jpg.exe"" ""%1"""
@@ -38,6 +43,9 @@ Root: HKCR; Subkey: "SystemFileAssociations\.heif\shell\ConvertToJPG"; \
 Root: HKCR; Subkey: "SystemFileAssociations\.heif\shell\ConvertToJPG"; \
   ValueType: string; ValueName: "Icon"; ValueData: "{app}\image_to_jpg.exe,0"
 
+Root: HKCR; Subkey: "SystemFileAssociations\.heif\shell\ConvertToJPG"; \
+  ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Player"
+
 Root: HKCR; Subkey: "SystemFileAssociations\.heif\shell\ConvertToJPG\command"; \
   ValueType: string; ValueName: ""; ValueData: """{app}\image_to_jpg.exe"" ""%1"""
 
@@ -47,6 +55,9 @@ Root: HKCR; Subkey: "SystemFileAssociations\.webp\shell\ConvertToJPG"; \
 
 Root: HKCR; Subkey: "SystemFileAssociations\.webp\shell\ConvertToJPG"; \
   ValueType: string; ValueName: "Icon"; ValueData: "{app}\image_to_jpg.exe,0"
+
+Root: HKCR; Subkey: "SystemFileAssociations\.webp\shell\ConvertToJPG"; \
+  ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Player"
 
 Root: HKCR; Subkey: "SystemFileAssociations\.webp\shell\ConvertToJPG\command"; \
   ValueType: string; ValueName: ""; ValueData: """{app}\image_to_jpg.exe"" ""%1"""
@@ -58,6 +69,9 @@ Root: HKCR; Subkey: "SystemFileAssociations\.png\shell\ConvertToJPG"; \
 Root: HKCR; Subkey: "SystemFileAssociations\.png\shell\ConvertToJPG"; \
   ValueType: string; ValueName: "Icon"; ValueData: "{app}\image_to_jpg.exe,0"
 
+Root: HKCR; Subkey: "SystemFileAssociations\.png\shell\ConvertToJPG"; \
+  ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Player"
+
 Root: HKCR; Subkey: "SystemFileAssociations\.png\shell\ConvertToJPG\command"; \
   ValueType: string; ValueName: ""; ValueData: """{app}\image_to_jpg.exe"" ""%1"""
 
@@ -67,6 +81,9 @@ Root: HKCR; Subkey: "SystemFileAssociations\.pdf\shell\ConvertToJPG"; \
 
 Root: HKCR; Subkey: "SystemFileAssociations\.pdf\shell\ConvertToJPG"; \
   ValueType: string; ValueName: "Icon"; ValueData: "{app}\image_to_jpg.exe,0"
+
+Root: HKCR; Subkey: "SystemFileAssociations\.pdf\shell\ConvertToJPG"; \
+  ValueType: string; ValueName: "MultiSelectModel"; ValueData: "Player"
 
 Root: HKCR; Subkey: "SystemFileAssociations\.pdf\shell\ConvertToJPG\command"; \
   ValueType: string; ValueName: ""; ValueData: """{app}\image_to_jpg.exe"" ""%1"""

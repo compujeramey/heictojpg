@@ -51,7 +51,7 @@ jobs:
 
             1. Download **ImageToJPG-Setup.exe** below
             2. Run it and follow the installer (requires admin)
-            3. Right-click any `.heic`, `.heif`, `.webp`, `.png`, or `.pdf` file → **Convert to JPG**
+            3. Right-click any `.heic`, `.heif`, `.webp`, `.png`, or `.pdf` file (or a multi-file selection) → **Convert to JPG**
 
             Multi-page PDFs are converted to one JPG per page.
             The converted `.jpg`(s) are saved in the same folder as the original.

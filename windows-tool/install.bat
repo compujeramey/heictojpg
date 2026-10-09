@@ -33,30 +33,35 @@ echo Registering context menu for .heic files...
 reg add "HKCR\.heic"                                           /ve /d "heicfile" /f
 reg add "HKCR\heicfile\shell\ConvertToJPG"                     /ve /d "Convert to JPG" /f
 reg add "HKCR\heicfile\shell\ConvertToJPG"                     /v "Icon" /d "%EXE_DEST%,0" /f
+reg add "HKCR\heicfile\shell\ConvertToJPG"                     /v "MultiSelectModel" /d "Player" /f
 reg add "HKCR\heicfile\shell\ConvertToJPG\command"             /ve /d "\"%EXE_DEST%\" \"%%1\"" /f
 
 echo Registering context menu for .heif files...
 reg add "HKCR\.heif"                                           /ve /d "heiffile" /f
 reg add "HKCR\heiffile\shell\ConvertToJPG"                     /ve /d "Convert to JPG" /f
 reg add "HKCR\heiffile\shell\ConvertToJPG"                     /v "Icon" /d "%EXE_DEST%,0" /f
+reg add "HKCR\heiffile\shell\ConvertToJPG"                     /v "MultiSelectModel" /d "Player" /f
 reg add "HKCR\heiffile\shell\ConvertToJPG\command"             /ve /d "\"%EXE_DEST%\" \"%%1\"" /f
 
 echo Registering context menu for .webp files...
 reg add "HKCR\SystemFileAssociations\.webp\shell\ConvertToJPG"         /ve /d "Convert to JPG" /f
 reg add "HKCR\SystemFileAssociations\.webp\shell\ConvertToJPG"         /v "Icon" /d "%EXE_DEST%,0" /f
+reg add "HKCR\SystemFileAssociations\.webp\shell\ConvertToJPG"         /v "MultiSelectModel" /d "Player" /f
 reg add "HKCR\SystemFileAssociations\.webp\shell\ConvertToJPG\command" /ve /d "\"%EXE_DEST%\" \"%%1\"" /f
 
 echo Registering context menu for .png files...
 reg add "HKCR\SystemFileAssociations\.png\shell\ConvertToJPG"          /ve /d "Convert to JPG" /f
 reg add "HKCR\SystemFileAssociations\.png\shell\ConvertToJPG"          /v "Icon" /d "%EXE_DEST%,0" /f
+reg add "HKCR\SystemFileAssociations\.png\shell\ConvertToJPG"          /v "MultiSelectModel" /d "Player" /f
 reg add "HKCR\SystemFileAssociations\.png\shell\ConvertToJPG\command"  /ve /d "\"%EXE_DEST%\" \"%%1\"" /f
 
 echo Registering context menu for .pdf files...
 reg add "HKCR\SystemFileAssociations\.pdf\shell\ConvertToJPG"          /ve /d "Convert to JPG" /f
 reg add "HKCR\SystemFileAssociations\.pdf\shell\ConvertToJPG"          /v "Icon" /d "%EXE_DEST%,0" /f
+reg add "HKCR\SystemFileAssociations\.pdf\shell\ConvertToJPG"          /v "MultiSelectModel" /d "Player" /f
 reg add "HKCR\SystemFileAssociations\.pdf\shell\ConvertToJPG\command"  /ve /d "\"%EXE_DEST%\" \"%%1\"" /f
 
 echo.
 echo Installation complete.
-echo Right-click any .heic, .heif, .webp, .png, or .pdf file and choose "Convert to JPG".
+echo Right-click any .heic, .heif, .webp, .png, or .pdf file - or select several - and choose "Convert to JPG".
 pause
